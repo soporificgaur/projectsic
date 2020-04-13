@@ -2,11 +2,6 @@
 
 #pragma once
 
-// Synesthesia plugin stuff
-#include "LoudnessNRT.h"
-#include "ConstantQNRT.h"
-#include "OnsetNRT.h"
-
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "MusicAnalysisInterface.h"
@@ -28,33 +23,24 @@ protected:
 	// Use to change things in c++ after it was changed in the editor (currently unused)
 	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
-	// Add 24 frequency bands to analyze 
-	// Based on Bark scale critical bands
-	void AddFrequencyBands();
-
 	// Delegate thats called by AudioComponent
 	UFUNCTION()
 	void OnMusicPlayback(const USoundWave* SoundWav, const float PlaybackPercent);
 
 	class UAudioComponent* AudioComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	ULoudnessNRT* LoudnessNRT;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UConstantQNRT* ConstantQNRT;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UOnsetNRT* OnsetNRT;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SoundWaveDuration;
 
-	float SoundClipDuration;
-
+	class AMusicVisualizerGameMode* GameMode;
 
 public:	
 	UPROPERTY(EditAnywhere)
+
 	// Sound wave to do analysis with
-	USoundWave* SoundWave;
+	FString SoundWaveString;
+
+	// Sound wave to do analysis with
+	//USoundWave* SoundWave;
 
 	void Test();
 

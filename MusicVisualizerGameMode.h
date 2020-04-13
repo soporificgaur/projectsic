@@ -17,4 +17,12 @@ class MUSICVISUALIZER_API AMusicVisualizerGameMode : public AGameModeBase
 	AMusicVisualizerGameMode();
 
 	TSubclassOf<class ADefaultCameraPawn> DefaultCameraPawnBPClass;
+
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void BeginVisualizationInit(const FString& File);
+
+	UFUNCTION(BlueprintCallable)
+		void Visualize(float DeltaSeconds, TArray<float> LeftChannelSpectrumData, TArray<float> RightChannelSpectrumData,
+			TArray<float> LeftChannelPeaks, TArray<float> RightChannlPeaks);
 };

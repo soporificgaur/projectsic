@@ -8,14 +8,10 @@ public class MusicVisualizer : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", 
-				"SignalProcessing", 
-				"AudioMixerCore",
-				"AudioMixer",
-				"AudioAnalyzer",
-				"AudioSynesthesia" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
+				/*"ParallelcubeAudioAnalyzer",*/ });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] { "ParallelcubeAudioAnalyzer" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

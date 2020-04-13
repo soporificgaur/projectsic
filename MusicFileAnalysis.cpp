@@ -3,10 +3,7 @@
 
 #include "MusicFileAnalysis.h"
 
-// Synethesia plugin stuff
-#include "AudioAnalyzerNRT.h"
-//#include "IAudioAnalyzerNRTInterface.h"
-#include "AudioAnalyzerAsset.h"
+#include "MusicVisualizerGameMode.h"
 
 #include "Components/AudioComponent.h"
 #include "Sound/SoundWave.h"
@@ -22,18 +19,16 @@ AMusicFileAnalysis::AMusicFileAnalysis()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	
-	AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
-	AudioComponent->OnAudioPlaybackPercent.AddDynamic(this, &AMusicFileAnalysis::OnMusicPlayback);
-	
-	LoudnessNRT = CreateDefaultSubobject<ULoudnessNRT>("LoudnessNRT");
-	ConstantQNRT = CreateDefaultSubobject<UConstantQNRT>("ConstantQNRT");
-	OnsetNRT = CreateDefaultSubobject<UOnsetNRT>("OnsetNRT");
+	//AudioComponent = CreateDefaultSubobject<UAudioComponent>("AudioComponent");
+	//AudioComponent->OnAudioPlaybackPercent.AddDynamic(this, &AMusicFileAnalysis::OnMusicPlayback);
 }
 
 // Called when the game starts or when spawned
 void AMusicFileAnalysis::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GameMode = (AMusicVisualizerGameMode*)GetWorld()->GetAuthGameMode();
 
 	Test();
 }
@@ -122,45 +117,28 @@ bool AMusicFileAnalysis::RetrieveSoundWaveInfoFromOggFile(USoundWave* SoundWav, 
 	return 1; 
 }
 
-void AMusicFileAnalysis::AddFrequencyBands()
-{
-	
-}
-
 void AMusicFileAnalysis::BeginVisualization()
 {
-	if (SoundWave)
+	if (GameMode)
 	{
-		LoudnessNRT->Sound = SoundWave;
-		ConstantQNRT->Sound = SoundWave;
-		OnsetNRT->Sound = SoundWave;
-
-		AudioComponent->SetSound(LoudnessNRT->Sound);
-		SoundWaveDuration = LoudnessNRT->Sound->Duration;
-
-		AudioComponent->Play();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Error: SoundWave file has not been set (MusicFileAanlysis.cpp)"));
+		GameMode->BeginVisualizationInit(SoundWaveString);
 	}
 }
 
 void AMusicFileAnalysis::OnMusicPlayback(const USoundWave* SoundWav, const float PlaybackPercent)
 {
-	TArray<float> Out;
-	ConstantQNRT->GetNormalizedChannelConstantQAtTime(SoundWaveDuration * PlaybackPercent, 0, Out);
-	//LoudnessNRT->GetNormalizedChannelLoudnessAtTime( (SoundWaveDuration * PlaybackPercent), 0, Out);
-	UE_LOG(LogTemp, Error, TEXT("%f"), 1.0);
+
 }
 
 void AMusicFileAnalysis::RecieveFileString(const FString& File)
 {
-	SoundWave = GetSoundWaveFromOggFile(File);
+	//SoundWave = GetSoundWaveFromOggFile(File);
+	SoundWaveString = File;
 }
 
 void AMusicFileAnalysis::Test()
 {
+	SoundWaveString = "Test.ogg";
 	BeginVisualization();
 }
 
