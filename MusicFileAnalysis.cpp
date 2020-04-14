@@ -125,11 +125,6 @@ void AMusicFileAnalysis::BeginVisualization()
 	}
 }
 
-void AMusicFileAnalysis::OnMusicPlayback(const USoundWave* SoundWav, const float PlaybackPercent)
-{
-
-}
-
 void AMusicFileAnalysis::RecieveFileString(const FString& File)
 {
 	//SoundWave = GetSoundWaveFromOggFile(File);

@@ -24,8 +24,8 @@ protected:
 	//virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	// Delegate thats called by AudioComponent
-	UFUNCTION()
-	void OnMusicPlayback(const USoundWave* SoundWav, const float PlaybackPercent);
+	//UFUNCTION()
+	//void OnMusicPlayback(const USoundWave* SoundWav, const float PlaybackPercent);
 
 	class UAudioComponent* AudioComponent;
 

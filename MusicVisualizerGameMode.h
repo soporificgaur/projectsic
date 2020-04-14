@@ -17,12 +17,19 @@ class MUSICVISUALIZER_API AMusicVisualizerGameMode : public AGameModeBase
 	AMusicVisualizerGameMode();
 
 	TSubclassOf<class ADefaultCameraPawn> DefaultCameraPawnBPClass;
+	class ANoiseField3D* ANoiseFieldPtr;
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BeginVisualizationInit(const FString& File);
 
 	UFUNCTION(BlueprintCallable)
-		void Visualize(float DeltaSeconds, TArray<float> LeftChannelSpectrumData, TArray<float> RightChannelSpectrumData,
-			TArray<float> LeftChannelPeaks, TArray<float> RightChannlPeaks);
+	void Visualize(TArray<float> LeftChannelSpectrumData, TArray<float> RightChannelSpectrumData,
+		TArray<float> LeftChannelAverage, TArray<float> RightChannelAverage,
+		TArray<float> LeftAudioAmplitude, TArray<float> RightAudioAmplitude);
+
+	void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void FinishInit();
 };
