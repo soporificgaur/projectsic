@@ -6,6 +6,8 @@
 #include "Particle.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Materials/Material.h"
+#include "Engine/StaticMeshActor.h"
 #include "NoiseField3D.generated.h"
 
 UCLASS()
@@ -16,64 +18,95 @@ class MUSICVISUALIZER_API ANoiseField3D : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ANoiseField3D();
-	
-	//Audio Analysis Properties
+
+	//**********Audio Analysis Properties**********
 	UPROPERTY(EditAnywhere)
 	int NumBands = 8;
 	UPROPERTY(EditAnywhere)
 	bool SetParticleSpeedToMusic = true;
 	UPROPERTY(EditAnywhere)
-	FVector2D MoveSpeedBounds = FVector2D(50.0f, 700.0f); // How slow/fast the particles will move depending on music
+	bool SetParticleScaleToMusic = true;
+	// How slow/fast the particles will move depending on music
 	UPROPERTY(EditAnywhere)
-	FVector2D RotateSpeedBounds = FVector2D(.5f, 2.5f); // How slow/fast the particles will rotate depending on music
+	FVector2D MoveSpeedBounds = FVector2D(5.0f, 500.0f); 
+	// How slow/fast the particles will rotate depending on music
+	UPROPERTY(EditAnywhere)
+	FVector2D RotateSpeedBounds = FVector2D(5.0f, 14.0f); 
+	// If corresponding amplitude band does not pass this thresold, the particle will be black
+	UPROPERTY(EditAnywhere)
+	float AmplitudeMinThresholdColor = .35f;
+	// Scale amplitude values so that the particles' brightness looks good
+	UPROPERTY(EditAnywhere)
+	float AmplitudeBrightnessMultiplier1 = .7f;
+	// If corresponding amplitude band does not pass this thresold, the particle will not glow very brightly
+	UPROPERTY(EditAnywhere)
+	float AmplitudeMinThresholdGlow = .65f;
+	UPROPERTY(EditAnywhere)
+	float AmplitudeBrightnessMultiplier2 = 5.25f;
+	// How fast the peak values for each band decay
+	// Used in case a song has, for example, some kind of unique sound
+	// that raises the peak of a frequency band. If this sound is never played again (or not played much)
+	// the brightness of the particle would not reach its max again
+	UPROPERTY(EditAnywhere)
+	float PeakDecayTime = 30.0f;
 
-	// Noise Properties
+	//  **********Noise Properties**********
 	FastNoise* Noise;
 	// Defines how large the vector grid will be (in terms of vectors)
 	UPROPERTY(EditAnywhere)
-	FIntVector NoiseGridSize = FIntVector(20, 20, 20); 
-
+	FIntVector NoiseGridSize = FIntVector(18, 26, 18); 
 	// Defines noise resolution
 	UPROPERTY(EditAnywhere)
-	float NoiseIncrement = 5; 
-
+	float NoiseIncrement = 6; 
 	UPROPERTY(EditAnywhere)
 	FVector Offset;
-
 	// Determines how fast the noise field shifts
 	UPROPERTY(EditAnywhere)
-	FVector OffsetSpeed = FVector(10, 10, 10); 
-
+	FVector OffsetSpeed = FVector(12, 12, 12);
 	// Defines how much space each vector influences
 	UPROPERTY(EditAnywhere)
-	float VectorSize = 70; 
-
+	float VectorSize = 26; 
 	// Defines how many particles will be spawned
 	UPROPERTY(EditAnywhere)
-	int ParticleAmount = 1750; 
-
+	int ParticleAmount = 1600; 
 	UPROPERTY(EditAnywhere)
-	float ParticleSize = .07;
-
+	//FVector2D ParticleSize = FVector2D(.03f, .12f);
+	FVector2D ParticleSize = FVector2D(.03f, .08f);
 	// Defines how closely particles can spawn
 	UPROPERTY(EditAnywhere)
-	float ParticleSpawnRadius = .05; 
-
+	float ParticleSpawnRadius = .04; 
 	UPROPERTY(EditAnywhere)
-	float ParticleModeSpeed = 125.0f;
+	bool UseTanFuncForZNoise = false;
 
-	// Defines how quickly the particles will rotate to their corresponding vector 
-	UPROPERTY(EditAnywhere)
-	float ParticleRotateSpeed = 1.25f; 
 
 	// 3D array of FVectors
-	// Its really a one dimensional array,
-	// but using some big brain mode we can treat it like a 3D array
+	// Its really a one dimensional array, but we can treat it like a 3D array using some multipliers
 	TArray<FVector> VectorFlowDirections;
 	
 	UClass* NoiseParticle;
 
+	UPROPERTY()
+	bool UseGradient;
+
+	UPROPERTY(EditAnywhere)
+	TArray<UMaterial*> GradientMaterials;
+
+	UPROPERTY(EditAnywhere)
+	int GradientIndex = 0;
+
+	UPROPERTY(EditAnywhere)
+	AActor* ReflectiveSurface;
+
+	UPROPERTY(EditAnywhere)
+	bool UseReflectiveSurface = true;
+
 protected:
+	UPROPERTY()
+	TArray<UMaterialInstanceDynamic*> ParticleDynamicMaterials;
+
+	float ParticleMoveSpeed;
+	float ParticleRotateSpeed;
+
 	bool FinishedInit = false;
 
 	TArray<float> LeftChannelSpectrumData;
@@ -83,6 +116,11 @@ protected:
 
 	TArray<float> LeftAudioAmplitude;
 	TArray<float> RightAudioAmplitude;
+
+	TArray<float> TotalBandAmplitude;
+	TArray<float> PeakBandAmplitude;
+
+	TArray<float> AmplitudeToVisualize;
 
 	FVector ParticleNudgeDirection;
 
@@ -95,6 +133,8 @@ protected:
 	float GridLowerZBound;
 
 	TArray<AParticle*> NoiseFieldParticles;
+
+	//UMaterialInterface* ParticleMaterial;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -128,4 +168,6 @@ public:
 	void InitVisualization();
 
 	void FinishInit();
+
+	void CheckForNewPeaks(float DeltaTime);
 };
