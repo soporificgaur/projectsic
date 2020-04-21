@@ -64,10 +64,7 @@ void AMusicVisualizerGameMode::Test()
 
 void AMusicVisualizerGameMode::BeginVisualization()
 {
-	if (GameMode)
-	{
-		GameMode->BeginVisualizationInit(SoundWaveString);
-	}
+	BeginVisualizationInit(SoundWaveString);
 }
 
 void AMusicVisualizerGameMode::RecieveFileString(const FString& File)
